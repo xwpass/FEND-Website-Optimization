@@ -21,6 +21,7 @@ Live version:http://xwpass.github.io/FEND-Website-Optimization/
  - scale down over-sized images.
 
 2. main.js
+ - replaced `querySelector` with `getElementById`.
  - replaced `querySelectorAll` with `getElementsByClassName`.
  - optimized `updatePositions` function.
  - optimized `changePizzaSizes` function.

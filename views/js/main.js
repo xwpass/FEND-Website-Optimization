@@ -1,3 +1,4 @@
+'use strict'
 /*
 Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
 jank-free at 60 frames per second.
@@ -403,16 +404,17 @@ var resizePizzas = function(size) {
   window.performance.mark("mark_start_resize");   // User Timing API function
 
   // Changes the value for the size of the pizza above the slider
+
   function changeSliderLabel(size) {
     switch(size) {
       case "1":
-        document.querySelector("#pizzaSize").innerHTML = "Small";
+        document.getElementById("pizzaSize").innerHTML = "Small";
         return;
       case "2":
-        document.querySelector("#pizzaSize").innerHTML = "Medium";
+        document.getElementById("pizzaSize").innerHTML = "Medium";
         return;
       case "3":
-        document.querySelector("#pizzaSize").innerHTML = "Large";
+        document.getElementById("pizzaSize").innerHTML = "Large";
         return;
       default:
         console.log("bug in changeSliderLabel");
@@ -424,7 +426,7 @@ var resizePizzas = function(size) {
    // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
   function determineDx (elem, size) {
     var oldWidth = elem.offsetWidth;
-    var windowWidth = document.querySelector("#randomPizzas").offsetWidth;
+    var windowWidth = document.getElementById("randomPizzas").offsetWidth;
     var oldSize = oldWidth / windowWidth;
 
     // Optional TODO: change to 3 sizes? no more xl?
@@ -457,10 +459,14 @@ var resizePizzas = function(size) {
   //move the var out of for loop
   function changePizzaSizes(size) {
     var randomPizzas = document.getElementsByClassName("randomPizzaContainer");
+    var pizzasCount = randomPizzas.length;
+
+    if(pizzasCount > 0) {
     var dx = determineDx(randomPizzas[0], size);
     var newwidth = (randomPizzas[0].offsetWidth + dx) + 'px';
+    }
 
-    for(var i = 0; i < randomPizzas.length; i++) {
+    for(var i = 0; i < pizzasCount; i++) {
 
       randomPizzas[i].style.width = newwidth;
     }
@@ -479,9 +485,9 @@ var resizePizzas = function(size) {
 window.performance.mark("mark_start_generating"); // collect timing data
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
+//move the variable out of loop
 var pizzasDiv = document.getElementById("randomPizzas");
-for (var i = 2; i < 100; i++) {
-  
+for (var i = 2; i < 100; i++) { 
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
 
@@ -513,8 +519,8 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
  //getElementsByClassName is more effeicient than queryselectorAll
-  var items = document.getElementsByClassName('mover');
 
+  var items = document.getElementsByClassName('mover');
   var top = document.body.scrollTop;
   var constArray = [];
 
@@ -522,8 +528,10 @@ function updatePositions() {
     constArray.push(Math.sin((top/1250)+ i));
   }
 
+  var phase;
+
   for (var i = 0; i < items.length; i++) {
-    var phase = constArray[i % 5];
+    phase = constArray[i % 5];
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
   }
 
@@ -540,16 +548,29 @@ function updatePositions() {
 // runs updatePositions on scroll
 window.addEventListener('scroll', updatePositions);
 
+
 // Generates the sliding pizzas when the page loads.
 
 //var movingPizzas out of the for loop
 var movingPizzas = document.getElementById("movingPizzas1");
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  for (var i = 0; i < 200; i++) {
-    var elem = document.createElement('img');
+  var elem;
+
+// The number of backgournd pizzas should be displayed. 
+  var getPizzaNumber = function() {
+    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    return Math.round(h / 4 / 8);
+  }
+
+  var pizzaCount = getPizzaNumber();
+
+  for (var i = 0; i < pizzaCount; i++) {
+    elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
     elem.style.height = "100px";
